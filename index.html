@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+<title>SSBViewer - Your SSBRenderer online</title>
+<base href="" target="_self" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<meta http-equiv="content-script-type" content="text/javascript">
+<meta http-equiv="content-language" content="en-us">
+<meta name="application-name" content="SSBViewer">
+<meta name="author" content="Youka">
+<meta name="description" content="Online image editor with use of the SSB subtitle format.">
+<meta name="keywords" content="ssb,viewer,subtitle,renderer,image,editor,online">
+<meta name="robots" content="index,nofollow">
+<link rel="icon" type="image/png" href="ssb.png">
+<link href="style.css" type="text/css" rel="stylesheet" media="screen">
+<link href="codemirror-3.22/lib/codemirror.css" type="text/css" rel="stylesheet">
+<script src="jscolor/jscolor.js" type="text/javascript"></script>
+<script src="codemirror-3.22/lib/codemirror.js" type="text/javascript"></script>
+<script src="codemirror-3.22/mode/ssb/ssb.js"></script>
+<script src="functions.js" type="text/javascript"></script>
+</head>
+
+<body>
+<noscript>Javascript has to be enabled to render something!</noscript>
+<div id="error_tip"></div>
+<div id="display">
+<div id="img_text">No image loaded!</div>
+<img id="img" onload="this.style.display='block'; document.getElementById('img_text').style.display='none';" onerror="this.style.display='none'; document.getElementById('img_text').style.display='initial';" onmousemove="showPosition(event);" onmouseout="showPosition();" />
+<span id="position"></span>
+</div>
+<div class="options">
+<span class="title" title="Change display appearance">Display options:</span>
+Zoom:<select id="zoom" title="Visible size modifier" onchange="scaleSize();" autocomplete="off">
+	<option value=0.25>0.25x</option>
+	<option value=0.5>0.5x</option>
+	<option value=0.75>0.75x</option>
+	<option value=1 selected="selected">1x</option>
+	<option value=1.5>1.5x</option>
+	<option value=2>2x</option>
+</select><span style="margin-left: 20px;">Size:</span><select id="size" title="Width x Height" onchange="render();">
+	<option value=480>640x480</option>
+	<option value=396 selected="selected">704x396</option>
+	<option value=720>1280x720</option>
+	<option value=1080>1920x1080</option>
+</select><span style="margin-left: 20px;">Content:</span><select id="pattern" title="Content pattern" onchange="changeContent();">
+	<option value="solid" selected="selected">solid</option>
+	<option value="tiled">tiled</option>
+	<option value="image">image</option>
+</select><input id="color" class="color" value="000000" title="Content color" style="width: 60px;" onchange="render();" /><input id="file" name="file" type="file" value="" title="Content image" style="width: 22%; height: 22px; border: solid 1px grey; display: none;" onchange="render();" />
+</div>
+<div class="options">
+<table cellspacing=0 cellpadding=0><tr><td valign=top style="text-align: center;">
+<span class="title" title="SSB script and time to render on display" style="padding-right: 0px;">Script</span>
+<hr>
+Time<br><input id="hours" type="number" value=0 placeholder="h" maxlength=2 pattern="[0-9]+" title="Hours" style="width: 16px; text-align: right;" />:<input id="minutes" type="number" value=0 placeholder="m" maxlength=2 pattern="[0-5]?[0-9]" title="Minutes" style="width: 16px; text-align: right;" />:<input id="seconds" type="number" value=0 placeholder="s" maxlength=2 pattern="[0-5]?[0-9]" title="Seconds" style="width: 16px; text-align: right;" />.<input id="milliseconds" type="number" value=0 placeholder="ms" maxlength=3 pattern= "[0-9]+" title="Milliseconds" style="width: 24px; text-align: right;" />
+<hr>
+Info<br>
+<button type="button" class="info" title="Open SSB short reference" onclick="window.open('ssb_short_reference.pdf');" style="width: 65px;">SSB Ref</button><br>
+<button type="button" class="info" title="Shows target system fonts" onclick="window.open('fonts.php', '_blank', 'width=400,height=600,scrollbars=yes');">Fonts</button>
+<button type="button" class="info" title="Shows target system image samples" onclick="window.open('samples.php', '_blank', 'width=400,height=600,scrollbars=yes');">Samples</button>
+<hr>
+Render<br>
+<button type="button" class="main" title="Render SSB on display!" onclick="render()">Do it!</button>
+<img id="loading" src="ajaxloader.gif" style="display: none;">
+</td><td>
+<textarea id="script" autofocus placeholder="Enter your SSB content here">#META
+Title: My work
+Author: Me
+Description: Insert your description here.
+Version: 1.0 (01.01.2014)
+
+#STYLES
+Default: {align=5;font-size=40;font-style=b}
+
+#EVENTS
+0-10.0|Default|Write a note here.|{color=00ff00,0000ff;animate=(scale=2.5)}Hello world{color=ff0000}!</textarea>
+</td></tr></table>
+</div>
+<footer>
+Created by Youka<br>
+Working with SSBRenderer v0.0.3
+</footer>
+</body>
+
+<script>
+editor = CodeMirror.fromTextArea(document.getElementById('script'), {
+      lineNumbers: true,
+	  mode: "ssb"
+});	// see 'functions.js' for editor instance storage
+editor.setSize(700,300);
+document.body.onload = render;
+</script>
+
+</html>
